@@ -4,7 +4,28 @@
 #include <string>
 #include <conio.h> // Для использования _getch()
 using namespace std;
+class Box {
+public:
+    int x;
+    int y;
+    int speed;
+    SuperObject* into;
 
+    Box() {
+        int x = 0;
+        int y = 0;
+        int speed = 0;
+    }
+    void put(SuperObject* obj){
+        x = obj->x;
+        y = obj->y;
+        into = obj;
+    }
+    SuperObject* get() {
+        return into;
+    }
+    
+};
 class SuperObject
 {
 public:
