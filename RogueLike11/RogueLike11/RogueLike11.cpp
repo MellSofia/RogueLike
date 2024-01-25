@@ -3,41 +3,43 @@
 #include <vector>
 #include <string>
 #include <conio.h> // Для использования _getch()
+#include <list>
 using namespace std;
-class Box {
-public:
-    int x;
-    int y;
-    int speed;
-    SuperObject* into;
-
-    Box() {
-        int x = 0;
-        int y = 0;
-        int speed = 0;
-    }
-    void put(SuperObject* obj){
-        x = obj->x;
-        y = obj->y;
-        into = obj;
-    }
-    SuperObject* get() {
-        return into;
-    }
-    
-};
 class SuperObject
 {
 public:
     char icon;
     int x;
     int y;
-    int speed;
+    int speed = 0;
+    int direct = 0;
     SuperObject(int xP, int yP, const char iconP, int speedP) : x{ xP }, y{ yP }, icon{ iconP }, speed{ speedP } {}
     SuperObject() : SuperObject(30, 30, '.', 1) {}
     virtual void collition(SuperObject& obj, char movement) {}
     bool operator==(const SuperObject& other) const {
         return x == other.x && y == other.y && icon == other.icon && speed == other.speed;
+    }
+};
+template <typename T = SuperObject>
+class Box {
+public:
+    int x;
+    int y;
+    int speed = 0;
+    int direct = 0;
+    T* into;
+    //Box<SuperObject>box;
+    //Box<typeid(*into)>box(*into);
+    Box(T& intop) : x(intop.x), y(intop.y), speed(intop.speed), direct(intop.direct) {}
+    Box() :x(0), y(0), speed(0), direct(0), into(nullptr) {}
+    void put(T* obj){
+        x = obj->x;
+        y = obj->y;
+        //direct = obj->direct;
+        into = obj;
+    }
+    T* get() {
+        return into;
     }
 };
 
@@ -214,6 +216,8 @@ int main()
     SuperObjectArr.push_back(&monster);
     bool main_flag = true;
     char movement = {};
+    list <Box<SuperObject*>> l;
+
     while (main_flag)
     {
         convert();
