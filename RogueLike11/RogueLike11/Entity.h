@@ -1,8 +1,4 @@
 #pragma once
-#include "SuperObject.h"
-#include "Point.h"
-#include <iostream>
-using namespace std;
 
 class Entity : public SuperObject
 {

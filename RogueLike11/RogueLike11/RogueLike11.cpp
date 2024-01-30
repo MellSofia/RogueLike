@@ -1,13 +1,9 @@
 ﻿#include <iostream>
 #include <windows.h>
 #include <conio.h>
-#include "Point.h"
-#include "Coord.h"
-#include "SuperObject.h"
+#include "Source.cpp"
 #include "Entity.h"
 #include "Item.h"
-#include "Source.cpp"
-using namespace std;
 
 
 void displayClearField()

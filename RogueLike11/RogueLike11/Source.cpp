@@ -1,6 +1,7 @@
 #pragma once
 #include <list>
 #include "Point.h"
+#include "SuperObject.h"
 
 const int HIGH = 10;
 const int WIDTH = 10;

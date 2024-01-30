@@ -1,5 +1,4 @@
 #pragma once
-#include "SuperObject.h"
 #include "Coord.h"
 #include <iostream>
 

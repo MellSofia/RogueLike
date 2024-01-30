@@ -1,11 +1,4 @@
 #pragma once
-#include "Coord.h"
-#include "Point.h"
-#include <iostream>
-//#include <windows.h>
-
-using namespace std;
-
 
 class SuperObject
 {

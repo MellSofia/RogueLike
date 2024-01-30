@@ -1,9 +1,5 @@
 #pragma once
-#include <iostream>
-#include "SuperObject.h"
-#include "Point.h"
 
-using namespace std;
 
 class Item : public SuperObject
 {
