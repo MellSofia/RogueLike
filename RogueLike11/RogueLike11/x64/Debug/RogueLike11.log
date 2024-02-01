@@ -1,185 +1,26 @@
-﻿  Entity.cpp
-C:\Users\Student_08\Desktop\RogoeLike2\RogueLike\RogueLike11\RogueLike11\Entity.h(3,23): error C2504: SuperObject: не определен базовый класс
-  (компиляция исходного файла "Entity.cpp")
+﻿  Coord.cpp
+/Coord.cpp(1,1): error C1083: Не удается открыть файл источник: Coord.cpp: No such file or directory,
+  (компиляция исходного файла "/Coord.cpp")
   
-C:\Users\Student_08\Desktop\RogoeLike2\RogueLike\RogueLike11\RogueLike11\Entity.h(9,12): error C2061: синтаксическая ошибка: идентификатор "Point"
-  (компиляция исходного файла "Entity.cpp")
+  Entity.cpp
+/Entity.cpp(1,1): error C1083: Не удается открыть файл источник: Entity.cpp: No such file or directory,
+  (компиляция исходного файла "/Entity.cpp")
   
-C:\Users\Student_08\Desktop\RogoeLike2\RogueLike\RogueLike11\RogueLike11\Entity.h(9,5): error C2535: Entity::Entity(void): функция-член уже определена или объявлена
-  (компиляция исходного файла "Entity.cpp")
-  C:\Users\Student_08\Desktop\RogoeLike2\RogueLike\RogueLike11\RogueLike11\Entity.h(8,5):
-   см. объявление "Entity::Entity"
-  
-C:\Users\Student_08\Desktop\RogoeLike2\RogueLike\RogueLike11\RogueLike11\Entity.h(11,35): error C2061: синтаксическая ошибка: идентификатор "SuperObject"
-  (компиляция исходного файла "Entity.cpp")
-  
-C:\Users\Student_08\Desktop\RogoeLike2\RogueLike\RogueLike11\RogueLike11\Entity.h(8,16): error C2614: Entity: недопустимая инициализация члена: "SuperObject" не является базовым классом или членом
-  (компиляция исходного файла "Entity.cpp")
-  
-C:\Users\Student_08\Desktop\RogoeLike2\RogueLike\RogueLike11\RogueLike11\Entity.h(10,21): error C2065: placeP: необъявленный идентификатор
-  (компиляция исходного файла "Entity.cpp")
-  
-C:\Users\Student_08\Desktop\RogoeLike2\RogueLike\RogueLike11\RogueLike11\Entity.h(10,29): error C2065: speedP: необъявленный идентификатор
-  (компиляция исходного файла "Entity.cpp")
-  
-C:\Users\Student_08\Desktop\RogoeLike2\RogueLike\RogueLike11\RogueLike11\Entity.h(10,37): error C2065: directP: необъявленный идентификатор
-  (компиляция исходного файла "Entity.cpp")
-  
-C:\Users\Student_08\Desktop\RogoeLike2\RogueLike\RogueLike11\RogueLike11\Entity.h(10,46): error C2065: iconP: необъявленный идентификатор
-  (компиляция исходного файла "Entity.cpp")
-  
-C:\Users\Student_08\Desktop\RogoeLike2\RogueLike\RogueLike11\RogueLike11\Entity.h(10,60): error C2065: lifeP: необъявленный идентификатор
-  (компиляция исходного файла "Entity.cpp")
-  
-C:\Users\Student_08\Desktop\RogoeLike2\RogueLike\RogueLike11\RogueLike11\Entity.h(10,9): error C2614: Entity: недопустимая инициализация члена: "SuperObject" не является базовым классом или членом
-  (компиляция исходного файла "Entity.cpp")
-  
-C:\Users\Student_08\Desktop\RogoeLike2\RogueLike\RogueLike11\RogueLike11\Entity.h(13,20): error C2065: obj: необъявленный идентификатор
-  (компиляция исходного файла "Entity.cpp")
-  
-C:\Users\Student_08\Desktop\RogoeLike2\RogueLike\RogueLike11\RogueLike11\Entity.h(15,13): error C2065: obj: необъявленный идентификатор
-  (компиляция исходного файла "Entity.cpp")
-  
-C:\Users\Student_08\Desktop\RogoeLike2\RogueLike\RogueLike11\RogueLike11\Entity.h(15,41): error C2065: obj: необъявленный идентификатор
-  (компиляция исходного файла "Entity.cpp")
+  Item.cpp
+/Item.cpp(1,1): error C1083: Не удается открыть файл источник: Item.cpp: No such file or directory,
+  (компиляция исходного файла "/Item.cpp")
   
   Point.cpp
-C:\Users\Student_08\Desktop\RogoeLike2\RogueLike\RogueLike11\RogueLike11\Point.h(11,16): error C2143: синтаксическая ошибка: отсутствие ";" перед "*"
-  (компиляция исходного файла "Point.cpp")
-  
-C:\Users\Student_08\Desktop\RogoeLike2\RogueLike\RogueLike11\RogueLike11\Point.h(11,16): error C4430: отсутствует спецификатор типа - предполагается int. Примечание. C++ не поддерживает int по умолчанию
-  (компиляция исходного файла "Point.cpp")
-  
-C:\Users\Student_08\Desktop\RogoeLike2\RogueLike\RogueLike11\RogueLike11\Point.h(11,22): error C2238: непредвиденные лексемы перед ";"
-  (компиляция исходного файла "Point.cpp")
-  
-C:\Users\Student_08\Desktop\RogoeLike2\RogueLike\RogueLike11\RogueLike11\Point.h(14,25): error C2061: синтаксическая ошибка: идентификатор "SuperObject"
-  (компиляция исходного файла "Point.cpp")
-  
-C:\Users\Student_08\Desktop\RogoeLike2\RogueLike\RogueLike11\RogueLike11\Point.h(14,5): error C2535: Point::Point(Coord): функция-член уже определена или объявлена
-  (компиляция исходного файла "Point.cpp")
-  C:\Users\Student_08\Desktop\RogoeLike2\RogueLike\RogueLike11\RogueLike11\Point.h(13,5):
-   см. объявление "Point::Point"
-  
-C:\Users\Student_08\Desktop\RogoeLike2\RogueLike\RogueLike11\RogueLike11\Point.h(12,47): error C2614: Point: недопустимая инициализация члена: "into" не является базовым классом или членом
-  (компиляция исходного файла "Point.cpp")
-  
-C:\Users\Student_08\Desktop\RogoeLike2\RogueLike\RogueLike11\RogueLike11\Point.h(15,15): error C2065: iconP: необъявленный идентификатор
-  (компиляция исходного файла "Point.cpp")
-  
-C:\Users\Student_08\Desktop\RogoeLike2\RogueLike\RogueLike11\RogueLike11\Point.h(15,45): error C2065: intoP: необъявленный идентификатор
-  (компиляция исходного файла "Point.cpp")
-  
-C:\Users\Student_08\Desktop\RogoeLike2\RogueLike\RogueLike11\RogueLike11\Point.h(15,39): error C2614: Point: недопустимая инициализация члена: "into" не является базовым классом или членом
-  (компиляция исходного файла "Point.cpp")
-  
-C:\Users\Student_08\Desktop\RogoeLike2\RogueLike\RogueLike11\RogueLike11\Point.h(27,9): error C2065: into: необъявленный идентификатор
-  (компиляция исходного файла "Point.cpp")
+/Point.cpp(1,1): error C1083: Не удается открыть файл источник: Point.cpp: No such file or directory,
+  (компиляция исходного файла "/Point.cpp")
   
   RogueLike11.cpp
-C:\Users\Student_08\Desktop\RogoeLike2\RogueLike\RogueLike11\RogueLike11\Point.h(11,16): error C2143: синтаксическая ошибка: отсутствие ";" перед "*"
-  (компиляция исходного файла "RogueLike11.cpp")
-  
-C:\Users\Student_08\Desktop\RogoeLike2\RogueLike\RogueLike11\RogueLike11\Point.h(11,16): error C4430: отсутствует спецификатор типа - предполагается int. Примечание. C++ не поддерживает int по умолчанию
-  (компиляция исходного файла "RogueLike11.cpp")
-  
-C:\Users\Student_08\Desktop\RogoeLike2\RogueLike\RogueLike11\RogueLike11\Point.h(11,22): error C2238: непредвиденные лексемы перед ";"
-  (компиляция исходного файла "RogueLike11.cpp")
-  
-C:\Users\Student_08\Desktop\RogoeLike2\RogueLike\RogueLike11\RogueLike11\Point.h(14,25): error C2061: синтаксическая ошибка: идентификатор "SuperObject"
-  (компиляция исходного файла "RogueLike11.cpp")
-  
-C:\Users\Student_08\Desktop\RogoeLike2\RogueLike\RogueLike11\RogueLike11\Point.h(14,5): error C2535: Point::Point(Coord): функция-член уже определена или объявлена
-  (компиляция исходного файла "RogueLike11.cpp")
-  C:\Users\Student_08\Desktop\RogoeLike2\RogueLike\RogueLike11\RogueLike11\Point.h(13,5):
-   см. объявление "Point::Point"
-  
-C:\Users\Student_08\Desktop\RogoeLike2\RogueLike\RogueLike11\RogueLike11\Point.h(12,47): error C2614: Point: недопустимая инициализация члена: "into" не является базовым классом или членом
-  (компиляция исходного файла "RogueLike11.cpp")
-  
-C:\Users\Student_08\Desktop\RogoeLike2\RogueLike\RogueLike11\RogueLike11\Point.h(15,15): error C2065: iconP: необъявленный идентификатор
-  (компиляция исходного файла "RogueLike11.cpp")
-  
-C:\Users\Student_08\Desktop\RogoeLike2\RogueLike\RogueLike11\RogueLike11\Point.h(15,45): error C2065: intoP: необъявленный идентификатор
-  (компиляция исходного файла "RogueLike11.cpp")
-  
-C:\Users\Student_08\Desktop\RogoeLike2\RogueLike\RogueLike11\RogueLike11\Point.h(15,39): error C2614: Point: недопустимая инициализация члена: "into" не является базовым классом или членом
-  (компиляция исходного файла "RogueLike11.cpp")
-  
-C:\Users\Student_08\Desktop\RogoeLike2\RogueLike\RogueLike11\RogueLike11\Point.h(27,9): error C2065: into: необъявленный идентификатор
-  (компиляция исходного файла "RogueLike11.cpp")
-  
-C:\Users\Student_08\Desktop\RogoeLike2\RogueLike\RogueLike11\RogueLike11\SuperObject.h(25,12): error C2039: "into": не является членом "Point".
-  (компиляция исходного файла "RogueLike11.cpp")
-  C:\Users\Student_08\Desktop\RogoeLike2\RogueLike\RogueLike11\RogueLike11\Point.h(6,7):
-   см. объявление "Point"
-  
-C:\Users\Student_08\Desktop\RogoeLike2\RogueLike\RogueLike11\RogueLike11\SuperObject.h(27,12): error C2039: "into": не является членом "Point".
-  (компиляция исходного файла "RogueLike11.cpp")
-  C:\Users\Student_08\Desktop\RogoeLike2\RogueLike\RogueLike11\RogueLike11\Point.h(6,7):
-   см. объявление "Point"
-  
-C:\Users\Student_08\Desktop\RogoeLike2\RogueLike\RogueLike11\RogueLike11\RogueLike11.cpp(25,32): error C2039: "into": не является членом "Point".
-  C:\Users\Student_08\Desktop\RogoeLike2\RogueLike\RogueLike11\RogueLike11\Point.h(6,7):
-   см. объявление "Point"
-  
-C:\Users\Student_08\Desktop\RogoeLike2\RogueLike\RogueLike11\RogueLike11\RogueLike11.cpp(26,55): error C2039: "into": не является членом "Point".
-  C:\Users\Student_08\Desktop\RogoeLike2\RogueLike\RogueLike11\RogueLike11\Point.h(6,7):
-   см. объявление "Point"
-  
-C:\Users\Student_08\Desktop\RogoeLike2\RogueLike\RogueLike11\RogueLike11\RogueLike11.cpp(101,55): error C2039: "into": не является членом "Point".
-  C:\Users\Student_08\Desktop\RogoeLike2\RogueLike\RogueLike11\RogueLike11\Point.h(6,7):
-   см. объявление "Point"
-  
-C:\Users\Student_08\Desktop\RogoeLike2\RogueLike\RogueLike11\RogueLike11\RogueLike11.cpp(103,55): error C2039: "into": не является членом "Point".
-  C:\Users\Student_08\Desktop\RogoeLike2\RogueLike\RogueLike11\RogueLike11\Point.h(6,7):
-   см. объявление "Point"
-  
-C:\Users\Student_08\Desktop\RogoeLike2\RogueLike\RogueLike11\RogueLike11\RogueLike11.cpp(104,81): error C2039: "into": не является членом "Point".
-  C:\Users\Student_08\Desktop\RogoeLike2\RogueLike\RogueLike11\RogueLike11\Point.h(6,7):
-   см. объявление "Point"
-  
   Source.cpp
-C:\Users\Student_08\Desktop\RogoeLike2\RogueLike\RogueLike11\RogueLike11\Point.h(11,16): error C2143: синтаксическая ошибка: отсутствие ";" перед "*"
-  (компиляция исходного файла "Source.cpp")
+/Source.cpp(1,1): error C1083: Не удается открыть файл источник: Source.cpp: No such file or directory,
+  (компиляция исходного файла "/Source.cpp")
   
-C:\Users\Student_08\Desktop\RogoeLike2\RogueLike\RogueLike11\RogueLike11\Point.h(11,16): error C4430: отсутствует спецификатор типа - предполагается int. Примечание. C++ не поддерживает int по умолчанию
-  (компиляция исходного файла "Source.cpp")
-  
-C:\Users\Student_08\Desktop\RogoeLike2\RogueLike\RogueLike11\RogueLike11\Point.h(11,22): error C2238: непредвиденные лексемы перед ";"
-  (компиляция исходного файла "Source.cpp")
-  
-C:\Users\Student_08\Desktop\RogoeLike2\RogueLike\RogueLike11\RogueLike11\Point.h(14,25): error C2061: синтаксическая ошибка: идентификатор "SuperObject"
-  (компиляция исходного файла "Source.cpp")
-  
-C:\Users\Student_08\Desktop\RogoeLike2\RogueLike\RogueLike11\RogueLike11\Point.h(14,5): error C2535: Point::Point(Coord): функция-член уже определена или объявлена
-  (компиляция исходного файла "Source.cpp")
-  C:\Users\Student_08\Desktop\RogoeLike2\RogueLike\RogueLike11\RogueLike11\Point.h(13,5):
-   см. объявление "Point::Point"
-  
-C:\Users\Student_08\Desktop\RogoeLike2\RogueLike\RogueLike11\RogueLike11\Point.h(12,47): error C2614: Point: недопустимая инициализация члена: "into" не является базовым классом или членом
-  (компиляция исходного файла "Source.cpp")
-  
-C:\Users\Student_08\Desktop\RogoeLike2\RogueLike\RogueLike11\RogueLike11\Point.h(15,15): error C2065: iconP: необъявленный идентификатор
-  (компиляция исходного файла "Source.cpp")
-  
-C:\Users\Student_08\Desktop\RogoeLike2\RogueLike\RogueLike11\RogueLike11\Point.h(15,45): error C2065: intoP: необъявленный идентификатор
-  (компиляция исходного файла "Source.cpp")
-  
-C:\Users\Student_08\Desktop\RogoeLike2\RogueLike\RogueLike11\RogueLike11\Point.h(15,39): error C2614: Point: недопустимая инициализация члена: "into" не является базовым классом или членом
-  (компиляция исходного файла "Source.cpp")
-  
-C:\Users\Student_08\Desktop\RogoeLike2\RogueLike\RogueLike11\RogueLike11\Point.h(27,9): error C2065: into: необъявленный идентификатор
-  (компиляция исходного файла "Source.cpp")
-  
-C:\Users\Student_08\Desktop\RogoeLike2\RogueLike\RogueLike11\RogueLike11\SuperObject.h(25,12): error C2039: "into": не является членом "Point".
-  (компиляция исходного файла "Source.cpp")
-  C:\Users\Student_08\Desktop\RogoeLike2\RogueLike\RogueLike11\RogueLike11\Point.h(6,7):
-   см. объявление "Point"
-  
-C:\Users\Student_08\Desktop\RogoeLike2\RogueLike\RogueLike11\RogueLike11\SuperObject.h(27,12): error C2039: "into": не является членом "Point".
-  (компиляция исходного файла "Source.cpp")
-  C:\Users\Student_08\Desktop\RogoeLike2\RogueLike\RogueLike11\RogueLike11\Point.h(6,7):
-   см. объявление "Point"
+  SuperObject.cpp
+/SuperObject.cpp(1,1): error C1083: Не удается открыть файл источник: SuperObject.cpp: No such file or directory,
+  (компиляция исходного файла "/SuperObject.cpp")
   
   Создание кода...

@@ -1,10 +1,106 @@
 ﻿#include <iostream>
 #include <windows.h>
+#include <list>
 #include <conio.h>
-#include "Source.cpp"
-#include "Entity.h"
-#include "Item.h"
+using namespace std;
+char emptyChar = '.';
 
+class SuperObject;
+class Coord
+{
+public:
+    int x = 0;
+    int y = 0;
+    Coord(int xP, int yP) :
+        x{ xP }, y{ yP } {};
+    Coord& operator()(int xP, int yP)
+    {
+        x = xP; y = yP;
+        return *this;
+    };
+};
+
+class Point
+{
+public:
+    char icon = emptyChar;
+    Coord coord;
+    SuperObject* into;
+    Point() : icon{ emptyChar }, coord(0, 0), into{ nullptr } {};
+    Point(Coord coordP) : coord{ coordP }, into{nullptr} {};
+    Point(Coord coordP, SuperObject* intoP, char iconP = emptyChar) :
+        icon{ iconP }, coord(coordP), into{ intoP } {};
+
+    Point* operator()(char iconP)
+    {
+        icon = iconP;
+        return this;
+    }
+
+    void clear(int xP = 0, int yP = 0)
+    {
+        coord(0, 0);
+        icon = emptyChar;
+        into = nullptr;
+
+    }
+};
+ostream& operator<<(ostream& out, Point& obj)
+{
+    return out << obj.icon;
+}
+
+class SuperObject
+{
+    Point* place;
+public:
+    char icon;
+    int speed;
+    int direct;
+    SuperObject() :
+        place{ nullptr }, speed{ 0 }, direct{ 0 }, icon{ emptyChar } {}
+    SuperObject(Point* placeP, int speedP = 0, int directP = 0, char iconP = emptyChar) :
+        speed{ speedP }, direct{ directP }, icon{ iconP } {
+        link(placeP);
+    }
+
+    virtual Coord& getCoord()
+    {
+        return place->coord;
+    }
+    virtual void link(Point* p)
+    {
+        p->into = nullptr;
+        place = p;
+        p->into = this;
+    }
+    virtual int collision_hanlder(SuperObject* obj)
+    {
+        return 0;
+    };
+    virtual Coord move() //возвращает координаты следующего местоположения. не меняет текущие параметры
+    {
+        Coord tcoord(place->coord);
+        //your code here
+        return tcoord;
+    }
+};
+
+//----- env var -----
+
+const int HIGH = 10;
+const int WIDTH = 10;
+//char emptyChar = '.';
+
+int fps = 4;
+int latency = 1000 / fps;
+
+Point display[HIGH][WIDTH]{};
+list<SuperObject*> objects;
+
+char keyboardPress;
+bool main_flag = true;
+//===== env var =====
 
 void displayClearField()
 {
@@ -16,6 +112,7 @@ void displayClearField()
         };
     }
 }
+
 void displayFill()
 {
     for (int i = 0; i < HIGH; ++i)
@@ -39,6 +136,42 @@ void displayOut()
         cout << "\n";
     }
 }
+
+
+class Entity : public SuperObject
+{
+public:
+    int life = 1;
+
+    Entity() : SuperObject() {}
+    Entity(Point* placeP, char iconP, int lifeP, int speedP = 0, int directP = 0) :
+        SuperObject(placeP, speedP, directP, iconP), life{ lifeP } {}
+    virtual int collision_hanlder(SuperObject* obj)
+    {
+        if (typeid(obj) == typeid(Entity)) //EXAMPLE
+        {
+            obj = dynamic_cast<Entity*>(obj);
+            life = 0;
+        }
+        return 1;
+    }
+};
+
+class Item : public SuperObject
+{
+public:
+    int temp = 2;
+
+    Item() : SuperObject() {}
+    Item(Point* placeP, char iconP, int tempP, int speedP = 0, int directP = 0) :
+        SuperObject(placeP, speedP, directP, iconP), temp{ tempP } {}
+
+    virtual int collision_hanlder(SuperObject* obj)
+    {
+        //your code here
+        return 1;
+    }
+};
 
 int main()
 {
