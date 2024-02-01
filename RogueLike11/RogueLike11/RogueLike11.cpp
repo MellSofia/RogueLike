@@ -9,8 +9,8 @@ class SuperObject;
 class Coord
 {
 public:
-    int x = 0;
-    int y = 0;
+    int x{ 0 };
+    int y{ 0 };
     Coord(int xP, int yP) :
         x{ xP }, y{ yP } {};
     Coord& operator()(int xP, int yP)
@@ -19,15 +19,14 @@ public:
         return *this;
     };
 };
-
 class Point
 {
 public:
-    char icon = emptyChar;
+    char icon{ emptyChar };
     Coord coord;
-    SuperObject* into;
-    Point() : icon{ emptyChar }, coord(0, 0), into{ nullptr } {};
-    Point(Coord coordP) : coord{ coordP }, into{nullptr} {};
+    SuperObject* into{ nullptr };
+    Point() : icon{ emptyChar }, coord(0, 0) {};
+    Point(Coord coordP) : coord{ coordP } {};
     Point(Coord coordP, SuperObject* intoP, char iconP = emptyChar) :
         icon{ iconP }, coord(coordP), into{ intoP } {};
 
@@ -55,22 +54,28 @@ class SuperObject
     Point* place;
 public:
     char icon;
-    int speed;
-    int direct;
+    int speed{ 1 }; // квантификатор скорости
+    bool ismov{ false }; // движется объект или нет
+    int direct{ 0 };
     SuperObject() :
-        place{ nullptr }, speed{ 0 }, direct{ 0 }, icon{ emptyChar } {}
-    SuperObject(Point* placeP, int speedP = 0, int directP = 0, char iconP = emptyChar) :
-        speed{ speedP }, direct{ directP }, icon{ iconP } {
+        place{ nullptr }, icon{ emptyChar } {}
+    SuperObject(Point* placeP, char iconP = emptyChar, int speedP = 1, bool ismovP = false, int directP = 0) :
+        speed{ speedP }, direct{ directP }, ismov{ ismovP }, icon{ iconP }
+    {
         link(placeP);
     }
 
-    virtual Coord& getCoord()
+
+    virtual Coord* getCoord()
     {
-        return place->coord;
+        return &place->coord;
     }
+
     virtual void link(Point* p)
     {
-        p->into = nullptr;
+        if (place != nullptr)
+            place->into = nullptr;
+        
         place = p;
         p->into = this;
     }
@@ -78,10 +83,25 @@ public:
     {
         return 0;
     };
-    virtual Coord move() //возвращает координаты следующего местоположения. не меняет текущие параметры
+    virtual Coord move()
     {
         Coord tcoord(place->coord);
-        //your code here
+        tcoord=place->coord;
+        switch (direct)
+        {
+        case 0:
+            break;
+        case 1:
+            tcoord.y -= speed; break;
+        case 2:
+            tcoord.x += speed; break;
+        case 3:
+            tcoord.y += speed; break;
+        case 4:
+            tcoord.x -= speed; break;
+        default:
+            break;
+        }
         return tcoord;
     }
 };
@@ -89,7 +109,7 @@ public:
 //----- env var -----
 
 const int HIGH = 10;
-const int WIDTH = 10;
+const int WIDTH = 5;
 //char emptyChar = '.';
 
 int fps = 4;
@@ -101,7 +121,6 @@ list<SuperObject*> objects;
 char keyboardPress;
 bool main_flag = true;
 //===== env var =====
-
 void displayClearField()
 {
     for (int i = 0; i < HIGH; ++i)
@@ -112,7 +131,6 @@ void displayClearField()
         };
     }
 }
-
 void displayFill()
 {
     for (int i = 0; i < HIGH; ++i)
@@ -144,8 +162,8 @@ public:
     int life = 1;
 
     Entity() : SuperObject() {}
-    Entity(Point* placeP, char iconP, int lifeP, int speedP = 0, int directP = 0) :
-        SuperObject(placeP, speedP, directP, iconP), life{ lifeP } {}
+    Entity(Point* placeP, char iconP, int lifeP) :
+        SuperObject(placeP, iconP), life{ lifeP } {}
     virtual int collision_hanlder(SuperObject* obj)
     {
         if (typeid(obj) == typeid(Entity)) //EXAMPLE
@@ -163,8 +181,8 @@ public:
     int temp = 2;
 
     Item() : SuperObject() {}
-    Item(Point* placeP, char iconP, int tempP, int speedP = 0, int directP = 0) :
-        SuperObject(placeP, speedP, directP, iconP), temp{ tempP } {}
+    Item(Point* placeP, char iconP, int tempP) :
+        SuperObject(placeP, iconP), temp{ tempP } {}
 
     virtual int collision_hanlder(SuperObject* obj)
     {
@@ -175,6 +193,13 @@ public:
 
 int main()
 {
+    for (int i = 0; i < HIGH; i++)
+    {
+        for (int j = 0; j < WIDTH; j++)
+        {
+            display[i][j].coord(j, i);
+        }
+    };
     Entity player;
     player.link(&display[5][5]);
     player.icon = '@';
@@ -197,16 +222,20 @@ int main()
         switch (keyboardPress)
         {
         case 'w':
-            player.getCoord().y -= 1;
+            player.ismov = true;
+            player.direct = 1;
             break;
         case 'd':
-            player.getCoord().x += 1;
+            player.ismov = true;
+            player.direct = 2;
             break;
         case 's':
-            player.getCoord().y += 1;
+            player.ismov = true;
+            player.direct = 3;
             break;
         case 'a':
-            player.getCoord().x -= 1;
+            player.ismov = true;
+            player.direct = 4;
             break;
         case ' ':
             break;
@@ -227,18 +256,22 @@ int main()
 
         for (SuperObject* curObj : objects)
         {
-            if (curObj->speed != 0)
+            if (curObj->ismov)
             {
                 tempCoord = curObj->move();
-                //проверка на то, есть ли что-то в этой точке (into=nulptr - false - пустота)
-                if (display[tempCoord.y][tempCoord.x].into)
-                {
-                    display[tempCoord.y][tempCoord.x].into->collision_hanlder(curObj);
-                    curObj->collision_hanlder(display[tempCoord.y][tempCoord.x].into);
-                }
-                else
-                {
-                    curObj->link(&display[tempCoord.y][tempCoord.x]);
+                if ((tempCoord.y >= 0 && tempCoord.y <= HIGH-1) and (tempCoord.x >= 0 && tempCoord.x <= WIDTH-1)) {
+                    //проверка на то, есть ли что-то в этой точке (into=nulptr - false - пустота)
+                    if (display[tempCoord.y][tempCoord.x].into)
+
+                    {
+                        display[tempCoord.y][tempCoord.x].into->collision_hanlder(curObj);
+                        curObj->collision_hanlder(display[tempCoord.y][tempCoord.x].into);
+                    }
+                    else
+                    {
+                        curObj->link(&display[tempCoord.y][tempCoord.x]);
+                        curObj->ismov = false;
+                    }
                 }
             }
         }
@@ -250,11 +283,24 @@ int main()
         displayFill();
         // добавление всех объектов на сцену
         // вывод сцены на экран
+        
         displayOut();
+
+        for (int i = 0; i < HIGH; ++i)
+        {
+            for (int j = 0; j < WIDTH; ++j)
+            {
+                cout << display[i][j].into << "  ";
+            };
+            cout << "\n";
+        }
+
         cout << keyboardPress << endl;
         Sleep(latency);
     }
 }
+
+
 //#include <iostream>
 //#include <Windows.h>
 //#include <vector>

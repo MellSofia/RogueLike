@@ -1,26 +1,2 @@
-﻿  Coord.cpp
-/Coord.cpp(1,1): error C1083: Не удается открыть файл источник: Coord.cpp: No such file or directory,
-  (компиляция исходного файла "/Coord.cpp")
-  
-  Entity.cpp
-/Entity.cpp(1,1): error C1083: Не удается открыть файл источник: Entity.cpp: No such file or directory,
-  (компиляция исходного файла "/Entity.cpp")
-  
-  Item.cpp
-/Item.cpp(1,1): error C1083: Не удается открыть файл источник: Item.cpp: No such file or directory,
-  (компиляция исходного файла "/Item.cpp")
-  
-  Point.cpp
-/Point.cpp(1,1): error C1083: Не удается открыть файл источник: Point.cpp: No such file or directory,
-  (компиляция исходного файла "/Point.cpp")
-  
-  RogueLike11.cpp
-  Source.cpp
-/Source.cpp(1,1): error C1083: Не удается открыть файл источник: Source.cpp: No such file or directory,
-  (компиляция исходного файла "/Source.cpp")
-  
-  SuperObject.cpp
-/SuperObject.cpp(1,1): error C1083: Не удается открыть файл источник: SuperObject.cpp: No such file or directory,
-  (компиляция исходного файла "/SuperObject.cpp")
-  
-  Создание кода...
+﻿  RogueLike11.cpp
+  RogueLike11.vcxproj -> C:\Users\Student_08\Desktop\RogoeLike2\RogueLike\RogueLike11\x64\Debug\RogueLike11.exe
