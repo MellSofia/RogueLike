@@ -54,8 +54,8 @@ class SuperObject
     Point* place;
 public:
     char icon;
-    int speed{ 1 }; // квантификатор скорости
-    bool ismov{ false }; // движется объект или нет
+    int speed{ 1 }; 
+    bool ismov{ false }; 
     int direct{ 0 };
     SuperObject() :
         place{ nullptr }, icon{ emptyChar } {}
