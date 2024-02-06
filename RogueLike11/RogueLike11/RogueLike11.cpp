@@ -2,6 +2,7 @@
 #include <windows.h>
 #include <list>
 #include <conio.h>
+#include <vector>
 using namespace std;
 char emptyChar = '.';
 
@@ -51,8 +52,8 @@ ostream& operator<<(ostream& out, Point& obj)
 
 class SuperObject
 {
-    Point* place;
 public:
+    Point* place;
     char icon;
     int speed{ 1 }; 
     bool ismov{ false }; 
@@ -73,8 +74,7 @@ public:
 
     virtual void link(Point* p)
     {
-        if (place != nullptr)
-            place->into = nullptr;
+        if (place != nullptr) place->into = nullptr;
         
         place = p;
         p->into = this;
@@ -108,8 +108,8 @@ public:
 
 //----- env var -----
 
-const int HIGH = 10;
-const int WIDTH = 5;
+const int HIGH = 15;
+const int WIDTH = 10;
 //char emptyChar = '.';
 
 int fps = 4;
@@ -155,26 +155,6 @@ void displayOut()
     }
 }
 
-
-class Entity : public SuperObject
-{
-public:
-    int life = 1;
-
-    Entity() : SuperObject() {}
-    Entity(Point* placeP, char iconP, int lifeP) :
-        SuperObject(placeP, iconP), life{ lifeP } {}
-    virtual int collision_hanlder(SuperObject* obj)
-    {
-        if (typeid(obj) == typeid(Entity)) //EXAMPLE
-        {
-            obj = dynamic_cast<Entity*>(obj);
-            life = 0;
-        }
-        return 1;
-    }
-};
-
 class Item : public SuperObject
 {
 public:
@@ -184,13 +164,72 @@ public:
     Item(Point* placeP, char iconP, int tempP) :
         SuperObject(placeP, iconP), temp{ tempP } {}
 
+    
+};
+
+class Case : public SuperObject 
+{
+public:
+    vector<Item*> inventory;
+    Case(Point* placeP, char iconP, int sizeP) : SuperObject(placeP, iconP), inventory(sizeP) {};
+};
+
+class Entity : public SuperObject
+{
+public:
+    int life = 1;
+    vector<Item*> inventory;
+    Entity() : SuperObject(), inventory(1) {}
+    Entity(Point* placeP, char iconP, int lifeP, int sizeP) :
+        SuperObject(placeP, iconP), life{ lifeP }, inventory(sizeP) {}
     virtual int collision_hanlder(SuperObject* obj)
     {
-        //your code here
+        if (typeid(obj) == typeid(Case)) //EXAMPLE
+        {
+            obj = dynamic_cast<Case*>(obj);
+            link(obj->place);
+            ismov = false;
+        }
         return 1;
     }
 };
-
+class Human : public Entity 
+{
+public:
+    Human() : Entity() { }
+    Human(Point* placeP, char iconP, int lifeP, int sizeP) :
+        Entity(placeP, iconP, lifeP, sizeP) {}
+    
+};
+class Monster : public Entity
+{
+public:
+    bool friendly;
+    Monster() : Entity(), friendly() {}
+    Monster(Point* placeP, char iconP, int lifeP, int sizeP, bool friendlyP) :
+        Entity(placeP, iconP, lifeP, sizeP), friendly{ friendlyP } {
+    }
+};
+class Instruments :public Item
+{
+public:
+    int damage;
+    int life;
+    int ammo;
+    Instruments() : Item(), damage(1), life(1), ammo(1){}
+    Instruments(Point* placeP, char iconP, int tempP, int damageP, int lifeP, int ammoP) :
+        Item(placeP, iconP, tempP), damage{ damageP }, life{ lifeP }, ammo{ ammoP } {}
+};
+class Coin :public Item
+{
+public:
+    int volume;
+    Coin() : Item(),  volume(0) {}
+    Coin(Point* placeP, char iconP, int tempP, int volumeP) :
+        Item(placeP, iconP, tempP), volume{volumeP} {}
+};
+int enemyMoved[4]{1,2,3,4};
+char animates[5]{ '.', ',', ';', '|', '\'' };
 int main()
 {
     for (int i = 0; i < HIGH; i++)
@@ -200,20 +239,22 @@ int main()
             display[i][j].coord(j, i);
         }
     };
-    Entity player;
+    Human player;
     player.link(&display[5][5]);
     player.icon = '@';
     player.life = 10;
-    Entity enemy(&display[5][7], '$', 15);
-    Item sword(&display[3][3], '!', 2);
+    Monster enemy(&display[5][7], '$', 15, 2, false);
+    Instruments sword(&display[3][3], '!', 2, 3,20,1);
+    Case casee(&display[2][4], 'o', 5);
 
     //добавление объектов в список
     objects.push_back(&player);
     objects.push_back(&enemy);
     objects.push_back(&sword);
+    objects.push_back(&casee);
 
     Coord tempCoord(0, 0);
-
+    int i = 0;
     while (main_flag)
     {
         // -----------STEP 1: input-----------
@@ -248,20 +289,22 @@ int main()
         // здесь будет логика всех объектов: 
         // исполнение каких то паттернов движения, появление, применение свойств итд
         // в общем все, что должно произойти за этот такт
-
-
-
+        if (i > 3) i = 0;
+        enemy.ismov = true;
+        enemy.direct = enemyMoved[i];
+        ++i;
         // ---------STEP 2: processing---------
         // здесь же примененные действия обрабатываются, в частности - в блоке коллизии
 
         for (SuperObject* curObj : objects)
         {
+
             if (curObj->ismov)
             {
                 tempCoord = curObj->move();
                 if ((tempCoord.y >= 0 && tempCoord.y <= HIGH-1) and (tempCoord.x >= 0 && tempCoord.x <= WIDTH-1)) {
                     //проверка на то, есть ли что-то в этой точке (into=nulptr - false - пустота)
-                    if (display[tempCoord.y][tempCoord.x].into)
+                    if (display[tempCoord.y][tempCoord.x].into and typeid(display[tempCoord.y][tempCoord.x].into) != typeid(Case))
 
                     {
                         display[tempCoord.y][tempCoord.x].into->collision_hanlder(curObj);
@@ -286,17 +329,17 @@ int main()
         
         displayOut();
 
-        for (int i = 0; i < HIGH; ++i)
+        /*for (int i = 0; i < HIGH; ++i)
         {
             for (int j = 0; j < WIDTH; ++j)
             {
                 cout << display[i][j].into << "  ";
             };
             cout << "\n";
-        }
+        }*/
 
         cout << keyboardPress << endl;
-        Sleep(latency);
+        //Sleep(latency);
     }
 }
 
