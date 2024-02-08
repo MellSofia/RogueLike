@@ -75,9 +75,11 @@ public:
     virtual void link(Point* p)
     {
         if (place != nullptr) place->into = nullptr;
-        
-        place = p;
-        p->into = this;
+        if (p->into != nullptr) {}
+        else{
+            place = p;
+            p->into = this;
+        }
     }
     virtual int collision_hanlder(SuperObject* obj)
     {
@@ -110,10 +112,11 @@ public:
 
 const int HIGH = 15;
 const int WIDTH = 10;
-//char emptyChar = '.';
+bool openedy = false;
 
 int fps = 4;
 int latency = 1000 / fps;
+//Item opening[20];
 
 Point display[HIGH][WIDTH]{};
 list<SuperObject*> objects;
@@ -142,7 +145,6 @@ void displayFill()
         };
     }
 }
-
 void displayOut()
 {
     for (int i = 0; i < HIGH; ++i)
@@ -154,7 +156,6 @@ void displayOut()
         cout << "\n";
     }
 }
-
 class Item : public SuperObject
 {
 public:
@@ -167,11 +168,20 @@ public:
     
 };
 
+//class Player;
 class Case : public SuperObject 
 {
 public:
     vector<Item*> inventory;
+    bool opened{ false };
     Case(Point* placeP, char iconP, int sizeP) : SuperObject(placeP, iconP), inventory(sizeP) {};
+    virtual int collision_hanlder(SuperObject* obj) {
+        /*if (typeid(*obj) == typeid(Player)) {
+            openedy=false;
+        }*/
+        return 1;
+    }
+
 };
 
 class Entity : public SuperObject
@@ -180,8 +190,8 @@ public:
     int life = 1;
     vector<Item*> inventory;
     Entity() : SuperObject(), inventory(1) {}
-    Entity(Point* placeP, char iconP, int lifeP, int sizeP) :
-        SuperObject(placeP, iconP), life{ lifeP }, inventory(sizeP) {}
+    Entity(Point* placeP, char iconP, int lifeP, int speedP, int directP, int sizeP) :
+        SuperObject(placeP, iconP, speedP, directP), life{ lifeP }, inventory(sizeP) {}
     virtual int collision_hanlder(SuperObject* obj)
     {
         if (typeid(obj) == typeid(Case)) //EXAMPLE
@@ -193,21 +203,60 @@ public:
         return 1;
     }
 };
+
 class Human : public Entity 
 {
 public:
     Human() : Entity() { }
-    Human(Point* placeP, char iconP, int lifeP, int sizeP) :
-        Entity(placeP, iconP, lifeP, sizeP) {}
-    
+    Human(Point* placeP, char iconP, int lifeP, int speedP, int directP, int sizeP) :
+        Entity(placeP, iconP, speedP, directP, lifeP, sizeP) {}
+    virtual int collition_hendler(SuperObject* obj) {
+        if (typeid(obj) == typeid(Case)) {
+            
+            return 1;
+        }
+    }
+};
+
+int nn = 0;
+class Player : public Entity
+{
+public:
+    Player() : Entity() { }
+    Player(Point* placeP, char iconP, int lifeP, int sizeP, int speedP=1, int directP=0) :
+        Entity(placeP, iconP, speedP, directP, lifeP, sizeP){}
+    void displayInventory(Case* caseobj) {
+        for (int i = 0; i < caseobj->inventory.size(); i++) {
+            if (caseobj->inventory[i] != nullptr)
+                cout << "Inventory:" << caseobj->inventory[i]->icon << "|";
+        }
+    }
+    virtual int collision_hanlder(SuperObject* obj) {
+        //nn = 1;
+        //char save;
+        if (typeid(*obj) == typeid(Case)) {
+            //nn = 2;
+            //save = obj->icon;
+            //cout << save;
+            Case *caseobj = dynamic_cast<Case*>(obj);
+            if (caseobj) {
+                link(caseobj->place);
+                link(this->place);
+                //nn = 3;
+                openedy = true;
+                caseobj->icon = 'N';
+            }
+        }
+        return 1;
+    }
 };
 class Monster : public Entity
 {
 public:
     bool friendly;
     Monster() : Entity(), friendly() {}
-    Monster(Point* placeP, char iconP, int lifeP, int sizeP, bool friendlyP) :
-        Entity(placeP, iconP, lifeP, sizeP), friendly{ friendlyP } {
+    Monster(Point* placeP, char iconP, int lifeP, int sizeP, bool friendlyP, int speedP=1, int directP=1) :
+        Entity(placeP, iconP, speedP, directP, lifeP, sizeP), friendly{ friendlyP } {
     }
 };
 class Instruments :public Item
@@ -239,15 +288,16 @@ int main()
             display[i][j].coord(j, i);
         }
     };
-    Human player;
+    Player player;
+    char side[4] = { 30,16,31,17 };
     player.link(&display[5][5]);
-    player.icon = '@';
+    player.icon = side[player.direct];
     player.life = 10;
     Monster enemy(&display[5][7], '$', 15, 2, false);
     Instruments sword(&display[3][3], '!', 2, 3,20,1);
-    Case casee(&display[2][4], 'o', 5);
-
-    //добавление объектов в список
+    Case casee(&display[2][4], 'O', 5);
+    using namespace std;
+    casee.inventory.push_back(&sword);
     objects.push_back(&player);
     objects.push_back(&enemy);
     objects.push_back(&sword);
@@ -257,44 +307,43 @@ int main()
     int i = 0;
     while (main_flag)
     {
-        // -----------STEP 1: input-----------
-        // keyboard reciver
+
         keyboardPress = _getch();
+        system("cls");
+
         switch (keyboardPress)
         {
         case 'w':
             player.ismov = true;
             player.direct = 1;
+            player.icon = side[0];
             break;
         case 'd':
             player.ismov = true;
             player.direct = 2;
+            player.icon = side[1];
             break;
         case 's':
             player.ismov = true;
             player.direct = 3;
+            player.icon = side[2];
             break;
         case 'a':
             player.ismov = true;
             player.direct = 4;
+            player.icon = side[3];
             break;
         case ' ':
             break;
         case 27:
-            main_flag = false;  //exit
+            main_flag = false; 
             break;
         }
 
-        // environment motor
-        // здесь будет логика всех объектов: 
-        // исполнение каких то паттернов движения, появление, применение свойств итд
-        // в общем все, что должно произойти за этот такт
         if (i > 3) i = 0;
         enemy.ismov = true;
         enemy.direct = enemyMoved[i];
         ++i;
-        // ---------STEP 2: processing---------
-        // здесь же примененные действия обрабатываются, в частности - в блоке коллизии
 
         for (SuperObject* curObj : objects)
         {
@@ -303,8 +352,7 @@ int main()
             {
                 tempCoord = curObj->move();
                 if ((tempCoord.y >= 0 && tempCoord.y <= HIGH-1) and (tempCoord.x >= 0 && tempCoord.x <= WIDTH-1)) {
-                    //проверка на то, есть ли что-то в этой точке (into=nulptr - false - пустота)
-                    if (display[tempCoord.y][tempCoord.x].into and typeid(display[tempCoord.y][tempCoord.x].into) != typeid(Case))
+                     if (display[tempCoord.y][tempCoord.x].into )
 
                     {
                         display[tempCoord.y][tempCoord.x].into->collision_hanlder(curObj);
@@ -318,238 +366,17 @@ int main()
                 }
             }
         }
-
-        // -----------STEP 3: output-----------
-        // вывод сцены на экран
-        // очистка сцены и наполнение ее
-        system("cls");
         displayFill();
-        // добавление всех объектов на сцену
-        // вывод сцены на экран
-        
         displayOut();
-
-        /*for (int i = 0; i < HIGH; ++i)
-        {
-            for (int j = 0; j < WIDTH; ++j)
-            {
-                cout << display[i][j].into << "  ";
-            };
-            cout << "\n";
-        }*/
+        cout << "life: " << player.life <<endl;
+        //cout << nn;
+        //cout << endl;
+        while (openedy) {
+            player.displayInventory(&casee);
+            openedy = false;
+        }
+        cout << endl;
 
         cout << keyboardPress << endl;
-        //Sleep(latency);
     }
 }
-
-
-//#include <iostream>
-//#include <Windows.h>
-//#include <vector>
-//#include <string>
-//#include <conio.h> // Для использования _getch()
-//#include <list>
-//using namespace std;
-//class SuperObject
-//{
-//public:
-//    char icon;
-//    int x;
-//    int y;
-//    int speed = 0;
-//    int direct = 0;
-//    SuperObject(int xP, int yP, const char iconP, int speedP) : x{ xP }, y{ yP }, icon{ iconP }, speed{ speedP } {}
-//    SuperObject() : SuperObject(30, 30, '.', 1) {}
-//    virtual void collition(SuperObject& obj, char movement) {}
-//    bool operator==(const SuperObject& other) const {
-//        return x == other.x && y == other.y && icon == other.icon && speed == other.speed;
-//    }
-//};
-//const int HIGHT = 10;
-//const int WIDGH = 10;
-//
-//int fps = 25;
-//int latency = 1000 / fps;
-//char display[HIGHT][WIDGH];
-//vector<SuperObject*> SuperObjectArr = {};
-//int t = 0;
-//void convert() {
-//    for (int i = 0; i < HIGHT; i++) {
-//        for (int j = 0; j < WIDGH; j++) {
-//            display[i][j] = emptyChar;
-//        }
-//    }
-//    for (int i = 0; i < SuperObjectArr.size(); i++) {
-//        display[SuperObjectArr[i]->y][SuperObjectArr[i]->x] = SuperObjectArr[i]->icon;
-//    }
-//}
-//void print() {
-//    for (int i = 0; i < HIGHT; i++) {
-//        for (int j = 0; j < WIDGH; j++) {
-//            cout << display[i][j];
-//        }
-//        cout << "\n";
-//    }
-//}
-//void What_to_do(char movement) {
-//    int newX = SuperObjectArr[0]->x;
-//    int newY = SuperObjectArr[0]->y;
-//
-//    switch (movement) {
-//    case ('w'):
-//        newY = SuperObjectArr[0]->y - 1;
-//        break;
-//    case ('s'):
-//        newY = SuperObjectArr[0]->y + 1;
-//        break;
-//    case ('a'):
-//        newX = SuperObjectArr[0]->x - 1;
-//        break;
-//    case ('d'):
-//        newX = SuperObjectArr[0]->x + 1;
-//        break;
-//    default:
-//        //cout << "Не двигается";
-//        return;
-//    }
-//
-//    if (newX >= 0 && newX < WIDGH && newY >= 0 && newY < HIGHT && display[newY][newX] == emptyChar) {
-//        SuperObjectArr[0]->x = newX;
-//        SuperObjectArr[0]->y = newY;
-//    }
-//}
-//
-//void tolk(char movement) {
-//    int newX = SuperObjectArr[0]->x;
-//    int newY = SuperObjectArr[0]->y;
-//    int newX1 = SuperObjectArr[1]->x;
-//    int newY1 = SuperObjectArr[1]->y;
-//    int newX2 = SuperObjectArr[2]->x;
-//    int newY2 = SuperObjectArr[2]->y;
-//    switch (movement) {
-//    case ('w'):
-//        if ((newX == newX1) && (newY - 1 == newY1)) {
-//            newY1 = SuperObjectArr[1]->y - 1;
-//            newY = SuperObjectArr[0]->y - 1;
-//        }
-//        else {
-//            newY = SuperObjectArr[0]->y - 1;
-//        }
-//        break;
-//    case ('s'):
-//        if ((newX == newX1) && (newY + 1 == newY1)) {
-//            newY1 = SuperObjectArr[1]->y + 1;
-//            newY = SuperObjectArr[0]->y + 1;
-//        }
-//        else {
-//            newY = SuperObjectArr[0]->y + 1;
-//        }
-//        break;
-//    case ('a'):
-//        if ((newX - 1 == newX1) && (newY == newY1)) {
-//            newX = SuperObjectArr[0]->x - 1;
-//            newX1 = SuperObjectArr[1]->x - 1;
-//        }
-//        else {
-//            newX = SuperObjectArr[0]->x - 1;
-//        }
-//        break;
-//    case ('d'):
-//        if ((newX + 1 == newX1) && (newY == newY1)) {
-//            newX = SuperObjectArr[0]->x + 1;
-//            newX1 = SuperObjectArr[1]->x + 1;
-//        }
-//        else {
-//            newX = SuperObjectArr[0]->x + 1;
-//        }
-//        break;
-//    default:
-//        cout << "Не двигается";
-//        return;
-//    }
-//    if ((newX >= 0 && newX < WIDGH && newY >= 0 && newY < HIGHT && display[newY][newX] == emptyChar) || (newX1 >= 0 && newX1 < WIDGH && newY1 >= 0 && newY1 < HIGHT && display[newY1][newX1] == emptyChar)) {
-//        SuperObjectArr[1]->x = newX1;
-//        SuperObjectArr[1]->y = newY1;
-//        SuperObjectArr[0]->x = newX;
-//        SuperObjectArr[0]->y = newY;
-//    }
-//}
-//
-//class Entity :public SuperObject {
-//private:
-//public:
-//    int life;
-//    Entity(int xP, int yP, const char iconP, int speedP, int nlife) : SuperObject(xP, yP, iconP, speedP), life(nlife) {}
-//    void loss_life(int nlife, int t) {
-//        if ((life > 0) && (t == 0)) {
-//            life -= nlife;
-//        }
-//        if ((life == 0) && (t == 0)) {
-//            auto it = find_if(SuperObjectArr.begin(), SuperObjectArr.end(), [this](SuperObject* obj) {
-//                return obj == this;
-//                });
-//            if ((it != SuperObjectArr.end()) && (t == 0)) {
-//                SuperObjectArr.erase(it);
-//                t = 1;
-//            }
-//            cout << t << endl;
-//        }
-//    }
-//
-//    void add_life(int nlife) {
-//        life += nlife;
-//    }
-//    void collition(SuperObject& obj, char movement) {
-//        if (typeid(obj) == typeid(SuperObject)) {
-//            tolk(movement);
-//        }
-//        if (typeid(obj) == typeid(Entity)) {
-//            int newX0 = SuperObjectArr[0]->x;
-//            int newX2 = SuperObjectArr[2]->x;
-//            int newY0 = SuperObjectArr[0]->y;
-//            int newY2 = SuperObjectArr[2]->y;
-//            if (abs(newX0 - newX2) + abs(newY0 - newY2) == 1) {
-//                hit(dynamic_cast<Entity&>(obj), movement);
-//                cout << "ddddddddddddddddddd";
-//            }
-//        }
-//    }
-//    void hit(Entity& monster, char movement) {
-//        int t = 0;
-//        monster.loss_life(1, t);
-//        cout << t;
-//    }
-//    ~Entity() {
-//    }
-//};
-//int main()
-//{
-//    setlocale(LC_ALL, "rus");
-//    Sleep(1000);
-//    system("cls");
-//    Entity me{ 4, 5, '@', 1, 20 };
-//    SuperObjectArr.push_back(&me);
-//    SuperObject box{ 4, 2, '&', 1 };
-//    SuperObjectArr.push_back(&box);
-//    Entity monster{ 5, 5, '$', 1, 5 };
-//    SuperObjectArr.push_back(&monster);
-//    bool main_flag = true;
-//    char movement = {};
-//    list <Box<SuperObject*>> l;
-//
-//    while (main_flag)
-//    {
-//        convert();
-//        print();
-//        if (_kbhit()) {
-//            movement = _getch();
-//            me.collition(box, movement);
-//            if ((movement == 'e') && (monster.life >= 0)) {
-//                me.collition(monster, movement);
-//            }
-//        }
-//        Sleep(latency);
-//        system("cls");
-//    }
-//}
