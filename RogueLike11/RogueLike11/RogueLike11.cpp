@@ -74,9 +74,12 @@ public:
 
     virtual void link(Point* p)
     {
-        if (place != nullptr) place->into = nullptr;
+        if (place != nullptr)
+            place->into = nullptr;
+
         if (p->into != nullptr) {}
-        else{
+        else
+        {
             place = p;
             p->into = this;
         }
@@ -259,7 +262,7 @@ public:
     Monster() : Entity(), friendly() {}
     Monster(Point* placeP, char iconP, int lifeP, int damageP, bool friendlyP, int speedP = 0, int directP = 0, int sizeP = 1) :
         Entity(placeP, speedP, directP, iconP, lifeP, damageP, sizeP), friendly{friendlyP} {}
-    
+    virtual int collision_hanlder(SuperObject* obj);
 };
 
 
@@ -282,17 +285,15 @@ public:
             Case* caseObj = dynamic_cast<Case*>(obj);
             if (caseObj)
             {
-                caseObj->icon = 'O';
+                caseObj->icon = 'G';
                 link(caseObj->place);
                 link(this->place);
             }
             inventory_info = "";  // очищение предыдущего результата
-            //if (caseObj->inventory.size() != NULL) {
                 for (int i = 0; i < caseObj->inventory.size(); i++) {
                     if (caseObj->inventory[i] != nullptr) inventory_info += string(1, caseObj->inventory[i]->icon) + "|";
                     else inventory_info += " |";
                 }
-            //}
             inventory_info += "\n";
             cout << endl;
         }
@@ -308,14 +309,41 @@ public:
                 }
             }
         }
-        else if (typeid(*obj) == typeid(Monster)) {
+        else if (typeid(*obj) == typeid(Monster)) 
+        {
             Monster* monsterObj = dynamic_cast<Monster*>(obj);
-
+            if (monsterObj->life > 0) 
+            {
+                monsterObj->life -= this->damage;
+                if (monsterObj->life <= 0)
+                {
+                    monsterObj->ismov = false;
+                    deleting(monsterObj);
+                    monsterObj->icon = 206;
+                }
+            }
+            if (this->life <= 0) {
+                inventory_info = "";
+                for (int i = 0; i < monsterObj->inventory.size(); i++) {
+                    if (monsterObj->inventory[i] != nullptr) inventory_info += string(1, monsterObj->inventory[i]->icon) + "|";
+                    else inventory_info += " |";
+                }
+                inventory_info = "";
+            }
         }
-
-        return 1;
+    return 1;
     }
 };
+int Monster::collision_hanlder(SuperObject* obj) {
+    if (typeid(*obj) == typeid(Player)) {
+        Player* player = dynamic_cast<Player*>(obj);
+        if (this->life > 0) {
+            player->life -= this->damage;
+        }
+        
+    }
+    return 1;
+}
 int enemyMoved[4]{1,2,3,4};
 char animates[5]{ '.', ',', ';', '|', '\'' };
 int main()
@@ -331,8 +359,11 @@ int main()
     char side[4] = { 30,16,31,17 };
     player.link(&display[5][5]);
     player.icon = side[player.direct];
-    player.life = 10;
-    Monster enemy(&display[5][7], '$', 15, 1, false);
+    player.life = 15;
+    player.damage = 0;
+    Monster enemy(&display[5][7],'$', 5, 1, false);
+    enemy.damage = 1;
+    enemy.life = 5;
     Instruments sword(&display[3][3], '!', 2, 3,20,1);
     Case casee(&display[2][4], 'O', 5);
     casee.inventory.push_back(&sword);
@@ -398,7 +429,7 @@ int main()
                         if (display[tempCoord.y][tempCoord.x].into)
 
                         {
-                            display[tempCoord.y][tempCoord.x].into->collision_hanlder(curObj);
+                            //display[tempCoord.y][tempCoord.x].into->collision_hanlder(curObj);
                             curObj->collision_hanlder(display[tempCoord.y][tempCoord.x].into);
                         }
                         else
@@ -432,5 +463,6 @@ int main()
         cout << inventory_info;
         inventory_info = "";
         cout << keyboardPress << endl;
+        cout << enemy.life << endl;
     }
 }
