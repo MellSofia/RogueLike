@@ -84,6 +84,14 @@ public:
             p->into = this;
         }
     }
+    virtual void delink()
+    {
+        if (place != nullptr)
+        {
+            place->into = nullptr;
+            place = nullptr;
+        }
+    }
     virtual int collision_hanlder(SuperObject* obj)
     {
         return 0;
@@ -124,11 +132,14 @@ int latency = 1000 / fps;
 Point display[HIGH][WIDTH]{};
 vector<SuperObject*> objects;
 
+int enemyMoved[4]{ 1,2,3,4 };
+char animates[5]{ '.', ',', ';', '|', '\'' };
+
 char keyboardPress;
 bool main_flag = true;
 char heart = 3;
 char cross = 197;
-string inventory_info;
+int i = 0;
 //===== env var =====
 void displayClearField()
 {
@@ -165,13 +176,10 @@ void displayOut()
 class Item : public SuperObject
 {
 public:
-    int temp = 2;
 
     Item() : SuperObject() {}
-    Item(Point* placeP, char iconP, int tempP) :
-        SuperObject(placeP, iconP), temp{ tempP } {}
-
-    
+    Item(Point* placeP, char iconP) :
+        SuperObject(placeP, iconP){}
 };
 
 //class Player;
@@ -207,8 +215,8 @@ public:
     int life;
     int ammo;
     Instruments() : Item(), damagePlus(1), life(1), ammo(1) {}
-    Instruments(Point* placeP, char iconP, int tempP, int damagePlusP, int lifeP, int ammoP) :
-        Item(placeP, iconP, tempP), damagePlus{ damagePlusP }, life{ lifeP }, ammo{ ammoP } {}
+    Instruments(Point* placeP, char iconP, int damagePlusP, int lifeP, int ammoP) :
+        Item(placeP, iconP), damagePlus{ damagePlusP }, life{ lifeP }, ammo{ ammoP } {}
 };
 
 class Coin :public Item
@@ -216,10 +224,11 @@ class Coin :public Item
 public:
     int volume;
     Coin() : Item(), volume(0) {}
-    Coin(Point* placeP, char iconP, int tempP, int volumeP) :
-        Item(placeP, iconP, tempP), volume{ volumeP } {}
+    Coin(Point* placeP, char iconP, int volumeP) :
+        Item(placeP, iconP), volume{ volumeP } {}
 };
 
+vector<Item*> temp_inventory;
 class Entity : public SuperObject
 {
 public:
@@ -228,7 +237,8 @@ public:
     vector<Item*> inventory;
     Entity() : SuperObject(), inventory(1), damage(1) {}
     Entity(Point* placeP, char iconP, int lifeP, int damageP, int speedP = 0, int directP = 0, int sizeP=1) :
-        SuperObject(placeP, speedP, directP, iconP), life{ lifeP }, inventory(sizeP), damage{ damageP } {}
+        SuperObject(placeP, speedP, directP, iconP), life{ lifeP }, inventory(1), damage{ damageP } {}
+    
     virtual int collision_hanlder(SuperObject* obj)
     {
         if (typeid(obj) == typeid(Case)) 
@@ -237,6 +247,7 @@ public:
             link(obj->place);
             ismov = false;
         }
+
         return 1;
     }
 };
@@ -263,15 +274,23 @@ public:
     Monster(Point* placeP, char iconP, int lifeP, int damageP, bool friendlyP, int speedP = 0, int directP = 0, int sizeP = 1) :
         Entity(placeP, speedP, directP, iconP, lifeP, damageP, sizeP), friendly{friendlyP} {}
     virtual int collision_hanlder(SuperObject* obj);
+    
 };
+void circle_move(Monster& enemy) {
+    //int i = 0;
+    if (i > 3) i = 0;
+    enemy.ismov = true;
+    enemy.direct = enemyMoved[i];
+    ++i;
+}
 
-
+bool see = false;
 class Player : public Entity
 {
 public:
     Player() : Entity() { }
-    Player(Point* placeP, char iconP, int lifeP, int damage, int sizeP, int speedP=1, int directP=0) :
-        Entity(placeP, iconP, speedP, directP, lifeP, sizeP){}
+    Player(Point* placeP, char iconP, int lifeP, int damage, int sizeP=1, int speedP=1, int directP=0) :
+        Entity(placeP, iconP, speedP, directP, lifeP, 1){}
     void displayInventory(Case* caseobj) {
         for (int i = 0; i < caseobj->inventory.size(); i++) {
             if (caseobj->inventory[i] != nullptr)
@@ -289,24 +308,21 @@ public:
                 link(caseObj->place);
                 link(this->place);
             }
-            inventory_info = "";  // очищение предыдущего результата
                 for (int i = 0; i < caseObj->inventory.size(); i++) {
-                    if (caseObj->inventory[i] != nullptr) inventory_info += string(1, caseObj->inventory[i]->icon) + "|";
-                    else inventory_info += " |";
+                    if (caseObj->inventory[i] != nullptr) temp_inventory.push_back(caseObj->inventory[i]);
                 }
-            inventory_info += "\n";
-            cout << endl;
         }
         else if (typeid(*obj) == typeid(Instruments))
         {
             Instruments* instrumentObj = dynamic_cast<Instruments*>(obj);
-            for (int i = 0; i < this->inventory.size(); i++) {
-                if (this->inventory[i] == nullptr) {
-                    this->inventory[i] = instrumentObj;
-                    this->damage += instrumentObj->damagePlus;
-                    deleting(instrumentObj);
-                    break;
-                }
+        
+            if (inventory[0] != nullptr) {
+                delete inventory[0]; // Удаляем старый предмет
+            }
+            else {
+                this->inventory[0] = instrumentObj;
+                this->damage += instrumentObj->damagePlus;
+                deleting(instrumentObj);
             }
         }
         else if (typeid(*obj) == typeid(Monster)) 
@@ -322,13 +338,17 @@ public:
                     monsterObj->icon = 206;
                 }
             }
-            if (this->life <= 0) {
-                inventory_info = "";
+            else {
+                Point* tempP(monsterObj->place);
+                monsterObj->delink();
+                Coin coino(tempP,'@', 1);
+                objects.push_back(&coino);
+                                
                 for (int i = 0; i < monsterObj->inventory.size(); i++) {
-                    if (monsterObj->inventory[i] != nullptr) inventory_info += string(1, monsterObj->inventory[i]->icon) + "|";
-                    else inventory_info += " |";
+                    if (monsterObj->inventory[i] != nullptr) temp_inventory.push_back(monsterObj->inventory[i]);
                 }
-                inventory_info = "";
+                see = true;
+                cout << endl;
             }
         }
     return 1;
@@ -344,8 +364,7 @@ int Monster::collision_hanlder(SuperObject* obj) {
     }
     return 1;
 }
-int enemyMoved[4]{1,2,3,4};
-char animates[5]{ '.', ',', ';', '|', '\'' };
+
 int main()
 {
     for (int i = 0; i < HIGH; i++)
@@ -361,19 +380,31 @@ int main()
     player.icon = side[player.direct];
     player.life = 15;
     player.damage = 1;
-    Monster enemy(&display[5][7],'$', 5, 1, false);
-    enemy.damage = 1;
-    enemy.life = 5;
-    Instruments sword(&display[3][3], '!', 2, 3,20,1);
+    Monster enemy1(&display[2][3],'$', 5, 1, false);
+    enemy1.damage = 1;
+    enemy1.life = 5;
+    Monster enemy2(&display[5][7], '$', 5, 1, false);
+    enemy2.damage = 1;
+    enemy2.life = 5;
+    Monster enemy3(&display[9][2], '$', 5, 1, false);
+    enemy3.damage = 1;
+    enemy3.life = 5;
+    Instruments sword(&display[3][3], '!', 2, 3,20);
+    Instruments sword2;
+    enemy1.inventory.push_back(&sword2);
+    Instruments sword3(&display[5][3], '#', 2, 3, 20);
     Case casee(&display[2][4], 'O', 5);
     casee.inventory.push_back(&sword);
     objects.push_back(&player);
-    objects.push_back(&enemy);
+    objects.push_back(&enemy1);
+    objects.push_back(&enemy2);
+    objects.push_back(&enemy3);
     objects.push_back(&sword);
+    objects.push_back(&sword3);
     objects.push_back(&casee);
 
     Coord tempCoord(0, 0);
-    int i = 0;
+
     while (main_flag)
     {
 
@@ -412,10 +443,9 @@ int main()
             main_flag = false; 
             break;
         }
-        if (i > 3) i = 0;
-        enemy.ismov = true;
-        enemy.direct = enemyMoved[i];
-        ++i;
+        circle_move(enemy1);
+        circle_move(enemy2);
+        circle_move(enemy3);
         for (int i = 0; i < objects.size(); i++)
         {
             SuperObject* curObj = objects[i];
@@ -459,10 +489,13 @@ int main()
         
         //cout << endl << cross << endl;
         cout << endl;
-
-        cout << inventory_info;
-        inventory_info = "";
         cout << keyboardPress << endl;
-        cout << enemy.life << endl;
+        cout << enemy1.life << endl;
+        cout << enemy2.life << endl;
+        cout << enemy3.life << endl;
+
+        if (player.life <= 0) {
+            main_flag = false;
+        }
     }
 }
