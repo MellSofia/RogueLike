@@ -360,7 +360,7 @@ int main()
     player.link(&display[5][5]);
     player.icon = side[player.direct];
     player.life = 15;
-    player.damage = 0;
+    player.damage = 1;
     Monster enemy(&display[5][7],'$', 5, 1, false);
     enemy.damage = 1;
     enemy.life = 5;
