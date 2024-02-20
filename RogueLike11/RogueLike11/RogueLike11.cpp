@@ -344,10 +344,6 @@ public:
                 Coin coino(tempP,'@', 1);
                 objects.push_back(&coino);
                                 
-                for (int i = 0; i < monsterObj->inventory.size(); i++) {
-                    if (monsterObj->inventory[i] != nullptr) temp_inventory.push_back(monsterObj->inventory[i]);
-                }
-                see = true;
                 cout << endl;
             }
         }
